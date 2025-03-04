@@ -1,6 +1,6 @@
 ## Quiz App
 # live
-https://anilsjr.github.io/qiuz-app
+https://anilsjr.github.io/quiz-app
 ## Features
 - User-friendly interface
 - Multiple choice questions
