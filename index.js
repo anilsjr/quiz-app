@@ -84,7 +84,15 @@ function showResult() {
         if (selectedOption && parseInt(selectedOption.value) === currentQuestion.answer) {
             score++;
         }
-    });
+        resultContainer.style.display = 'block';
+            const myPopup = new Popup({
+                id: "my-popup",
+                title: "Your Score : ",
+                content: 
+                ${score} / ${questions.length} 
+            });
+        myPopup.show();
+        });
 
     // Clear previous result
     resultContainer.innerHTML = "";
