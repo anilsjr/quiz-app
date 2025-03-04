@@ -1,5 +1,4 @@
 const questions = [
-   
     {
         question: "Which of the following is not a Java feature?",
         options: ["Object-oriented", "Use of pointers", "Portable", "Dynamic and Extensible"],
@@ -10,13 +9,11 @@ const questions = [
         options: ["Dennis Ritchie", "James Gosling", "Bjarne Stroustrup", "Ken Thompson"],
         answer: 1
     },
-    
     {
-        question: "What is the extension of java code files?",
+        question: "What is the extension of Java code files?",
         options: [".js", ".txt", ".class", ".java"],
         answer: 3
     },
-   
     {
         question: "Which of the following is not an OOPS concept in Java?",
         options: ["Polymorphism", "Inheritance", "Compilation", "Encapsulation"],
@@ -55,12 +52,41 @@ function loadQuiz() {
     });
 }
 
+function showAnswer() {
+    quizContainer.innerHTML = ""; // Clear quiz UI to show answers
+
+    questions.forEach((currentQuestion, questionIndex) => {
+        const selectedOption = document.querySelector(`input[name="question${questionIndex}"]:checked`);
+        const isCorrect = selectedOption && parseInt(selectedOption.value) === currentQuestion.answer;
+
+        // Create question block
+        const questionElement = document.createElement('div');
+        questionElement.classList.add('question');
+        questionElement.innerHTML = `
+            <h5>${questionIndex + 1}. ${currentQuestion.question}</h5>
+            <ul class="options">
+                ${currentQuestion.options.map((option, index) => `
+                    <li style="color: ${index === currentQuestion.answer ? 'green' : (selectedOption && parseInt(selectedOption.value) === index ? 'red' : 'black')}">
+                        ${option} ${index === currentQuestion.answer ? "(Correct Answer)" : ""}
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+
+        quizContainer.appendChild(questionElement);
+    });
+
+    // Add reattempt button
+    let reAttemptButton = document.createElement('button');
+    reAttemptButton.classList.add('btn', 'btn-primary', 'p-1');
+    reAttemptButton.textContent = 'Re-Attempt Test';
+    reAttemptButton.addEventListener('click', renderAgain);
+    quizContainer.appendChild(reAttemptButton);
+}
+
 function showResult() {
     let score = 0;
     
-    // Clear previous result before evaluating answers
-    resultContainer.innerHTML = "";
-
     questions.forEach((currentQuestion, questionIndex) => {
         const selectedOption = document.querySelector(`input[name="question${questionIndex}"]:checked`);
         if (selectedOption && parseInt(selectedOption.value) === currentQuestion.answer) {
@@ -69,33 +95,19 @@ function showResult() {
     });
 
     // Display Score
-    let scoreElement = document.createElement('h3');
-    scoreElement.textContent = `Your Score: ${score} / ${questions.length}`;
-    resultContainer.appendChild(scoreElement);
-
-    // Show a popup with the score
-    const myPopup = new Popup({
-        id: "my-popup",
-        title: "Your Score : ",
-        content: `${score} / ${questions.length}` // Corrected string template
-    });
-    myPopup.show();
-
-    // Re-attempt button
-    let reAttemptButton = document.createElement('button');
-    reAttemptButton.classList.add('btn', 'btn-primary', 'p-1');
-    reAttemptButton.textContent = 'Re-Attempt Test';
-    reAttemptButton.addEventListener('click', renderAgain);
-
-    resultContainer.appendChild(reAttemptButton);
+    resultContainer.innerHTML = `<h3>Your Score: ${score} / ${questions.length}</h3>`;
     resultContainer.style.display = 'block';
 
     // Hide submit button
     submitBtn.style.display = 'none';
 
     // Fire confetti effect
-    setTimeout(fireCracker, 0);
-    setTimeout(fireCracker, 600);
+    for (let count = 0; count < score; count++) {
+        setTimeout(fireCracker, count * 100);
+    }
+
+    // Show answers
+    showAnswer();
 }
 
 submitBtn.addEventListener('click', showResult);
@@ -107,14 +119,10 @@ function renderAgain() {
     submitBtn.style.display = 'block'; // Show submit button again
 }
 
-// Load quiz when page loads
-loadQuiz();
-
+// Confetti animation
 function fireCracker() {
     const count = 200,
-        defaults = {
-            origin: { y: 0.7 },
-        };
+        defaults = { origin: { y: 0.7 } };
 
     function fire(particleRatio, opts) {
         confetti(
@@ -124,30 +132,13 @@ function fireCracker() {
         );
     }
 
-    fire(0.25, {
-        spread: 26,
-        startVelocity: 55,
-    });
-
-    fire(0.2, {
-        spread: 60,
-    });
-
-    fire(0.35, {
-        spread: 100,
-        decay: 0.91,
-        scalar: 0.8,
-    });
-
-    fire(0.1, {
-        spread: 120,
-        startVelocity: 25,
-        decay: 0.92,
-        scalar: 1.2,
-    });
-
-    fire(0.1, {
-        spread: 120,
-        startVelocity: 45,
-    });
+    fire(0.25, { spread: 26, startVelocity: 55 });
+    fire(0.2, { spread: 60 });
+    fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+    fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+    fire(0.1, { spread: 120, startVelocity: 45 });
 }
+
+// Load quiz when page loads
+loadQuiz();
+
