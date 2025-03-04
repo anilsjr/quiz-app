@@ -57,19 +57,25 @@ function showAnswer() {
 
     questions.forEach((currentQuestion, questionIndex) => {
         const selectedOption = document.querySelector(`input[name="question${questionIndex}"]:checked`);
-        const isCorrect = selectedOption && parseInt(selectedOption.value) === currentQuestion.answer;
+        const selectedValue = selectedOption ? parseInt(selectedOption.value) : -1;
 
-        // Create question block
         const questionElement = document.createElement('div');
         questionElement.classList.add('question');
         questionElement.innerHTML = `
             <h5>${questionIndex + 1}. ${currentQuestion.question}</h5>
             <ul class="options">
-                ${currentQuestion.options.map((option, index) => `
-                    <li style="color: ${index === currentQuestion.answer ? 'green' : (selectedOption && parseInt(selectedOption.value) === index ? 'red' : 'black')}">
-                        ${option} ${index === currentQuestion.answer ? "(Correct Answer)" : ""}
-                    </li>
-                `).join('')}
+                ${currentQuestion.options.map((option, index) => {
+                    let color = "black"; // Default color for unselected wrong options
+                    if (index === currentQuestion.answer) {
+                        color = "green"; // Correct answer
+                    } else if (index === selectedValue) {
+                        color = "red"; // Incorrectly selected answer
+                    }
+
+                    return `<li style="color: ${color}; font-weight: ${color !== "black" ? "bold" : "normal"};">
+                        ${option} ${index === currentQuestion.answer ? "(✔ Correct Answer)" : ""}
+                    </li>`;
+                }).join('')}
             </ul>
         `;
 
@@ -83,6 +89,7 @@ function showAnswer() {
     reAttemptButton.addEventListener('click', renderAgain);
     quizContainer.appendChild(reAttemptButton);
 }
+
 
 function showResult() {
     let score = 0;
@@ -105,7 +112,14 @@ function showResult() {
     for (let count = 0; count < score; count++) {
         setTimeout(fireCracker, count * 100);
     }
-
+    // Show a popup with the score const 
+    myPopup = new Popup({
+        id: "my-popup",
+        title: "Your Score : ", 
+        content: `${score} / ${questions.length} `
+        });
+    myPopup.show();
+    
     // Show answers
     showAnswer();
 }
