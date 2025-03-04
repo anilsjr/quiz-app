@@ -56,6 +56,7 @@ const resultContainer = document.getElementById('result-container');
 const submitBtn = document.getElementById('submit-btn');
 
 function loadQuiz() {
+    quizContainer.innerHTML = ""; // Clear previous quiz
     questions.forEach((currentQuestion, questionIndex) => {
         const questionElement = document.createElement('div');
         questionElement.classList.add('question');
@@ -84,78 +85,78 @@ function showResult() {
             score++;
         }
     });
-    resultContainer.innerHTML = `<h3>Your Score: ${score} / ${questions.length}</h3>`;
-    resultContainer.style.display = 'block';
-    const myPopup = new Popup({
-        id: "my-popup",
-        title: "Your Score : ",
-        content: `
-            ${score} / ${questions.length} 
-            `
-    });
-    myPopup.show();
-    
-    // Call fireCracker() three times with 500ms interval
-    setTimeout(fireCracker, 0);     // First time immediately
-    setTimeout(fireCracker, 500);   // Second time after 500ms
-    setTimeout(fireCracker, 1000);  // Third time after 1000ms (1s)
 
+    // Clear previous result
+    resultContainer.innerHTML = "";
+
+    let scoreElement = document.createElement('h3');
+    scoreElement.textContent = `Your Score: ${score} / ${questions.length}`;
+    resultContainer.appendChild(scoreElement);
+
+    let reAttemptButton = document.createElement('button');
+    reAttemptButton.classList.add('btn', 'btn-primary', 'p-1');
+    reAttemptButton.textContent = 'Re-Attempt Test';
+    reAttemptButton.addEventListener('click', renderAgain);
+
+    resultContainer.appendChild(reAttemptButton);
+    resultContainer.style.display = 'block';
+
+    submitBtn.style.display = 'none';
+
+    // Call fireCracker() three times with 500ms interval
+    setTimeout(fireCracker, 0);     
+    setTimeout(fireCracker, 600);   
 }
 
 submitBtn.addEventListener('click', showResult);
 
+function renderAgain() {
+    resultContainer.style.display = 'none';
+    quizContainer.innerHTML = "";
+    loadQuiz();
+    submitBtn.style.display = 'block';
+}
+
 loadQuiz();
 
-
-
-
-
-
-
-
-
-    
-function fireCracker(){
-        
+function fireCracker() {
     const count = 200,
-    defaults = {
-      origin: { y: 0.7 },
-    };
-  
-  function fire(particleRatio, opts) {
-    confetti(
-      Object.assign({}, defaults, opts, {
-        particleCount: Math.floor(count * particleRatio),
-      })
-    );
-  }
-  
+        defaults = {
+            origin: { y: 0.7 },
+        };
 
-  fire(0.25, {
-    spread: 26,
-    startVelocity: 55,
-  });
-  
-  fire(0.2, {
-    spread: 60,
-  });
-  
-  fire(0.35, {
-    spread: 100,
-    decay: 0.91,
-    scalar: 0.8,
-  });
-  
-  fire(0.1, {
-    spread: 120,
-    startVelocity: 25,
-    decay: 0.92,
-    scalar: 1.2,
-  });
-  
-  fire(0.1, {
-    spread: 120,
-    startVelocity: 45,
-  });
-
+    function fire(particleRatio, opts) {
+        confetti(
+            Object.assign({}, defaults, opts, {
+                particleCount: Math.floor(count * particleRatio),
+            })
+        );
     }
+
+    fire(0.25, {
+        spread: 26,
+        startVelocity: 55,
+    });
+
+    fire(0.2, {
+        spread: 60,
+    });
+
+    fire(0.35, {
+        spread: 100,
+        decay: 0.91,
+        scalar: 0.8,
+    });
+
+    fire(0.1, {
+        spread: 120,
+        startVelocity: 25,
+        decay: 0.92,
+        scalar: 1.2,
+    });
+
+    fire(0.1, {
+        spread: 120,
+        startVelocity: 45,
+    });
+}
